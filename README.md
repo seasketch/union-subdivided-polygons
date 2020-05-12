@@ -33,7 +33,7 @@ General-purpose clipping algorithms designed to work with overlapping polygons s
 
 Currently polygons with holes are poorly supported. Interior rings from subdivided features should be included in the output, but holes formed at the boundaries of subdivided features will be dropped from the output. It should be relatively straightforward to include support in a future version.
 
-**The algorithm is very sensitive to winding order.** Exterior rings of input polygons should run counter-clockwise.
+**The algorithm is very sensitive to winding order.** Exterior rings of input polygons should run counter-clockwise, in accordance with [the GeoJSON spec](https://tools.ietf.org/html/rfc7946#section-3.1.6). Unfortunately PostGIS functions and other tools often produce output with the opposite winding order. You can either create GeoJSON manually that adheres to this requirement or use a tool such as [turf.rewind](https://turfjs.org/docs/#rewind) to fix it before processing.
 
 If the input GeoJSON includes bounding box properties they will be used as a performance optimization. If they are there, they must be accurate and of the same precision as the actual coordinates or the algorithm will have trouble identifying corners.
 
