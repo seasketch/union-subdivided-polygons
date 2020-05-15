@@ -75,7 +75,7 @@ export default function makePolygons(
 
       // Any time you are moving straight along the edge of a feature a couple
       // edge cases can happen that disrupt the simple following of straight
-      // matches along boundaries. TODO: add ascii art
+      // matches along boundaries.
       // 1. There could be a vertex "behind you" indicating that you are
       //    erroneously turning inward when hitting a "wall"
       // 2. There could be an event between your origin and destination, coming
@@ -166,9 +166,23 @@ export default function makePolygons(
           }
         }
 
-        // Case 2. Check for vertex in the path ("T-intersection")
+        // Case 2. Check for vertex in the path ("Right turn")
+        //
+        //         c---------c-----------o
+        //         |         |           |
+        //         |         |     B     |
+        //         |         |           |
+        //         |    A    |-----------d
+        //         |         |
+        //         |         |
+        //         |         |
+        //         a---------b
+        //
+        // Naively following the path would lead from a -> b -> c but what we
+        // want here is a -> b -> intersection -> d
+        // The way to get the intersection is to look for events in the path
         if (inPath.length) {
-          // Found a neighbor. Follow the closest link to the right
+          // Found a neighbor. Follow the closest link that then turns right
           coordinates.push(inPath[0].position);
           prev = event;
           event = inPath[0];
@@ -204,6 +218,7 @@ export default function makePolygons(
       // duplicate vertices represent "pinches" that create multipolygons
       let segments: Position[][] = [];
       if (duplicateCoordinateLocations.length) {
+        duplicateCoordinateLocations.sort((a, b) => a - b);
         for (var i = 0; i < duplicateCoordinateLocations.length; i++) {
           segments.push(
             coordinates.slice(
@@ -234,6 +249,8 @@ export default function makePolygons(
                 // exterior ring
                 coordinates,
                 // interior rings
+                // TODO: All interior rings are added to all polygons....
+                // uh that's not right! Fix as part of Issue #1
                 ...interior,
               ],
             },
@@ -302,7 +319,6 @@ export default function makePolygons(
     }, {} as { [id: string]: Feature<Polygon | MultiPolygon> });
     outputCollection.features = Object.values(byId);
   }
-
   return outputCollection;
 }
 
