@@ -1,9 +1,14 @@
 const fs = require("fs");
 const path = require("path");
-const { createPool, sql } = require("slonik");
+const {
+  createPool,
+  sql
+} = require("slonik");
 const getEvents = require("../dist/src/getEvents").default;
 const makePolygons = require("../dist/src/makePolygons").default;
-const { EventIndex } = require("../dist/src/eventIndex");
+const {
+  EventIndex
+} = require("../dist/src/eventIndex");
 const {
   setupDb,
   getExampleByPath,
@@ -29,7 +34,12 @@ pool.connect(async (connection) => {
 
   console.time("union features total");
   console.time("segmentation");
-  const { events, interiorRings, bboxes, independentFeatures } = getEvents(
+  const {
+    events,
+    interiorRings,
+    bboxes,
+    independentFeatures
+  } = getEvents(
     collection,
     "_oid"
   );
@@ -40,7 +50,12 @@ pool.connect(async (connection) => {
   console.time("polygonize");
   let unionedCollection;
   try {
-    unionedCollection = makePolygons(collection, index, interiorRings, "_oid");
+    if (examplePath.includes("GwaiiHaanas")) {
+      unionedCollection = makePolygons(collection, index, interiorRings);
+    } else {
+      unionedCollection = makePolygons(collection, index, interiorRings, "_oid");
+    }
+
     unionedCollection.features.push(...independentFeatures);
   } catch (e) {
     console.error(e);
@@ -48,7 +63,10 @@ pool.connect(async (connection) => {
   console.timeEnd("polygonize");
   console.timeEnd("union features total");
 
-  const { inputErrors, outputErrors } = await saveArtifacts(
+  const {
+    inputErrors,
+    outputErrors
+  } = await saveArtifacts(
     connection,
     path.basename(examplePath, ".geojson"),
     bboxes,
