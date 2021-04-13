@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "prepublishOnly": "tsc"
+    "build:watch": "tsc --watch",
+    "prepare": "tsc"
   },
   "repository": {
     "type": "git",

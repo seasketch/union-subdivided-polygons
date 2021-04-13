@@ -45,14 +45,44 @@ Right now a single `union` operation is supported where all steps are performed 
 
 ## Running Tests and Scripts
 
-The tests and debugging scripts use a postgis database to verify the validity of outputs. A docker-compose file is provided in scripts, and with Docker installed starting the database is a simple matter of:
+To install dependencies and build the library run:
+
+```
+npm install
+```
+
+If you are actively editing code and running tests against your changes you can start the auto-build process by running:
+
+```sh
+npm run build:watch
+```
+
+The tests and debugging scripts available use a postgis database to verify the validity of outputs. A docker-compose file is provided, and if you have Docker installed and running, then bringing the database container up (in detached mode) and then back down when you are done is a simple matter of:
 
 ```
 cd scripts/
 docker-compose up -d
-# detached. `docker-compose` down to stop
+docker-compose down
 ```
 
-Run tests with `npm test`. They take some time as shipping all the features to the database for st_isvalid tests is slow.
+While the database is up, you can run the library test suite. They take some time as shipping all the features to the database for st_isvalid tests is slow.
 
-Debugging scripts are provided under scripts. To run all examples, use `node scripts/runExamples.js`, or run specific examples with `node scripts/debugExample.js examples/SoCal-Bight.geojson`. In both cases, lots of useful artifacts will be output into the postgres database and `scripts/qgis-project.qgz` has them loaded with good default symbology. These scripts assume the database in `docker-compose.yml` is available, but if you are running with different connection parameters you can run tests and scripts with a `DB` environment variable set to a custom connection string.
+```
+npm test
+```
+
+Debugging scripts are provided that will take a GeoJSON feature collection as input and run the union function, producing useful artifacts into the Postgres database. These scripts assume the database in `docker-compose.yml` is available, but if you are running with different connection parameters you can run tests and scripts with a `DB` environment variable set to a custom connection string.
+
+Run all examples in `examples` directory:
+
+```sh
+node scripts/runExamples.js
+```
+
+Run one example:
+
+```sh
+node scripts/debugExample.js examples/SoCal-Bight.geojson
+```
+
+You can then use the included QGIS project (`scripts/qgis-project.qgz`) to view the full debug outputs for the last run. It includes good default symbology.
