@@ -2,7 +2,7 @@ version: "3"
 services:
   db:
     container_name: db-union-subdivided-polygons
-    image: kartoza/postgis:12.0
+    image: seasketch/geoprocessing-db
     ports:
       - "54322:5432"
     # PGUSER: docker, PGPASSWORD: docker, PGDATABASE: gis
