@@ -297,6 +297,11 @@ export default function makePolygons(
           "originalIdField supplied but properties not present on feature"
         );
       }
+      if (! feature.properties.hasOwnProperty(originalIdField)) {
+        throw new Error(
+          `originalIdField "${originalIdField}" does not exist in feature: ${JSON.stringify(Object.keys(feature.properties))}`
+        )
+      }
       const existing = lookup[feature.properties[originalIdField].toString()];
       if (existing) {
         if (existing.geometry.type === "Polygon") {
