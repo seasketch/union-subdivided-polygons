@@ -79,10 +79,10 @@ Run all examples in `examples` directory:
 node scripts/runExamples.js
 ```
 
-Run one example:
+Run one example, with optional `originalIdProperty` to speed up the union. All polygons are expected to have this property and will throw an error if not.
 
 ```sh
-node scripts/debugExample.js examples/SoCal-Bight.geojson
+node scripts/debugExample.js examples/SoCal-Bight.geojson <originalIdProperty>
 ```
 
 You can then use the included QGIS project (`scripts/qgis-project.qgz`) to view the full debug outputs for the last run. It includes good default symbology.
