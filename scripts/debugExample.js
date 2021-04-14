@@ -24,6 +24,7 @@ const connectionString =
   process.env.DB || "postgres://docker:docker@localhost:54322/gis";
 
 const examplePath = process.argv[2];
+const unionProperty = process.argv[3]
 
 const collection = getExampleByPath(examplePath);
 
@@ -41,7 +42,7 @@ pool.connect(async (connection) => {
     independentFeatures
   } = getEvents(
     collection,
-    "_oid"
+    unionProperty
   );
   console.timeEnd("segmentation");
   console.time("index");
@@ -50,12 +51,7 @@ pool.connect(async (connection) => {
   console.time("polygonize");
   let unionedCollection;
   try {
-    if (examplePath.includes("GwaiiHaanas")) {
-      unionedCollection = makePolygons(collection, index, interiorRings);
-    } else {
-      unionedCollection = makePolygons(collection, index, interiorRings, "_oid");
-    }
-
+    unionedCollection = makePolygons(collection, index, interiorRings, unionProperty);
     unionedCollection.features.push(...independentFeatures);
   } catch (e) {
     console.error(e);
